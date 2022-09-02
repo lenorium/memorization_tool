@@ -6,7 +6,7 @@ def navigate(menu_item):
         print(menu_item)
         while True:
             command = input()
-            if not command.isdigit() or command not in menu_item.submenu:
+            if command not in menu_item.submenu:
                 print(f'\n{command} is not an option')
                 print(menu_item)
                 continue
