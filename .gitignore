@@ -1,3 +1,5 @@
 tests.py
 __pycache__
 .idea
+venv
+flashcards.db
