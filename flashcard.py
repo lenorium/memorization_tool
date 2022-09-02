@@ -7,7 +7,9 @@ class Flashcard:
 
     @classmethod
     def add_card(cls):
-        cls.__flashcards.append(Flashcard(input('Question:'), input('Answer:')))
+        question = cls.__input_text('Question', "The question can't be empty!")
+        answer = cls.__input_text('Answer', "The answer can't be empty!")
+        cls.__flashcards.append(Flashcard(question, answer))
 
     @classmethod
     def practice(cls):
@@ -20,3 +22,12 @@ class Flashcard:
                 if show_answer == 'y':
                     print(f'Answer: {card.answer}')
 
+    @staticmethod
+    def __input_text(field_name, error):
+        while True:
+            value = input(f'{field_name}:').strip()
+            if not value:
+                print(error)
+                continue
+            break
+        return value

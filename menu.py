@@ -4,7 +4,13 @@ from flashcard import Flashcard
 def navigate(menu_item):
     while True:
         print(menu_item)
-        command = input()
+        while True:
+            command = input()
+            if not command.isdigit() or command not in menu_item.submenu:
+                print(f'\n{command} is not an option')
+                print(menu_item)
+                continue
+            break
         choice = menu_item.submenu[command]
         if choice.submenu:
             navigate(choice)
