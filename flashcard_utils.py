@@ -3,7 +3,9 @@ from models import Flashcard
 
 
 def add_card():
-    db.save(Flashcard(input('Question:'), input('Answer:')))
+    question = __input_text('Question', "The question can't be empty!")
+    answer = __input_text('Answer', "The answer can't be empty!")
+    db.save(Flashcard(question, answer))
 
 
 def practice():
@@ -16,3 +18,13 @@ def practice():
             show_answer = input('Please press "y" to see the answer or press "n" to skip:').lower().strip()
             if show_answer == 'y':
                 print(f'Answer: {card.answer}')
+
+
+def __input_text(field_name, error):
+    while True:
+        value = input(f'{field_name}:').strip()
+        if not value:
+            print(error)
+            continue
+        break
+    return value
