@@ -52,7 +52,7 @@ class MenuItem:
             '1': MenuItem('Add flashcards', {
                 '1': MenuItem('Add a new flashcard', action=flashcard_utils.add),
                 '2': MenuItem('Exit')}),
-            '2': MenuItem('Practice flashcards', action=flashcard_utils.get_action),
+            '2': MenuItem('Practice flashcards', action=flashcard_utils.all_cards_menu),
             '3': MenuItem('Exit')})
 
     @classmethod
