@@ -8,7 +8,7 @@ class Flashcard(Base):
     __tablename__ = 'flashcard'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    question = Column(String, nullable=False, unique=True)
+    question = Column(String, nullable=False)
     answer = Column(String, nullable=False)
 
     def __init__(self, question, answer):
