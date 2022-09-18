@@ -79,13 +79,19 @@ def __answer_menu(card):
     menu = f'press "{yes_key}" if your answer is correct:\n' \
            f'press "{no_key}" if your answer is wrong:'
     print(f'Answer: {card.answer}')
-    __show_menu(menu, {yes_key: lambda: __if_yes(),
-                       no_key: lambda: __if_no()})
+    __show_menu(menu, {yes_key: lambda: __is_correct_answer(card),
+                       no_key: lambda: __is_wrong_answer(card)})
 
 
-def __if_yes():
-    pass
+def __is_correct_answer(card: Flashcard):
+    if card.is_in_max_box():
+        db.delete(card)
+    else:
+        card.box += 1
+        db.save(card)
 
 
-def __if_no():
-    pass
+def __is_wrong_answer(card: Flashcard):
+    if not card.is_in_min_box():
+        card.box -= 1
+        db.save(card)
