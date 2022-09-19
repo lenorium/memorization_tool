@@ -1,4 +1,4 @@
-from flashcard import Flashcard
+import flashcard_utils
 
 
 def navigate(menu_item):
@@ -50,9 +50,9 @@ class MenuItem:
     def __create_menu(cls):
         return MenuItem(submenu={
             '1': MenuItem('Add flashcards', {
-                '1': MenuItem('Add a new flashcard', action=Flashcard.add_card),
+                '1': MenuItem('Add a new flashcard', action=flashcard_utils.add),
                 '2': MenuItem('Exit')}),
-            '2': MenuItem('Practice flashcards', action=Flashcard.practice),
+            '2': MenuItem('Practice flashcards', action=flashcard_utils.get_action),
             '3': MenuItem('Exit')})
 
     @classmethod
