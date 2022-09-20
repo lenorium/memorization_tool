@@ -1,5 +1,5 @@
 from menu import MenuItem, navigate
 
 if __name__ == '__main__':
-    navigate(MenuItem.get_menu())
+    navigate(MenuItem.main_menu())
     print('Bye!')

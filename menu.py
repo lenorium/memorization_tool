@@ -14,7 +14,7 @@ def navigate(menu_item):
         choice = menu_item.submenu[command]
         if choice.action:
             choice.action()
-            if menu_item is MenuItem.get_menu():
+            if menu_item is MenuItem.main_menu():
                 continue
             else:
                 break
@@ -24,22 +24,37 @@ def navigate(menu_item):
             break
 
 
-def cards_menu():
+def practice_menu():
+    flashcards = flashcard_utils.get_all_cards()
+
+    for card in flashcards:
+        print(f'Question: {card.question}\n')
+        input('Press "Enter" to see answer')
+        flashcard_utils.check_answer(card)
+        to_exit = input('Type "exit" to quit practice mode: ').lower().strip() == 'exit'
+        if to_exit:
+            break
+
+
+def update_menu():
     flashcards = flashcard_utils.get_all_cards()
 
     menu = MenuItem(submenu={
-        '1': MenuItem(name='See the answer', action=lambda: flashcard_utils.check_answer(card)),
-        '2': MenuItem(name='Skip'),
-        '3': MenuItem(name='Update', submenu={
-            '1': MenuItem(name='Delete the flashcard', action=lambda: flashcard_utils.delete(card)),
-            '2': MenuItem(name='Edit the flashcard', action=lambda: flashcard_utils.edit(card)),
-            '3': MenuItem('Exit')
-        }),
-        '4': MenuItem(name='Exit'),
+        '1': MenuItem(name='Edit the flashcard', action=lambda: flashcard_utils.edit(card)),
+        '2': MenuItem(name='Delete the flashcard', action=lambda: flashcard_utils.delete(card)),
+        '3': MenuItem('Skip')
     })
     for card in flashcards:
         print(f'Question: {card.question}\n')
         navigate(menu)
+
+
+def add_menu():
+    key = None
+    while key != 'n':
+        flashcard_utils.add()
+        print()
+        key = input('Press "n" for quit or any key for continue ').lower().strip()
 
 
 class MenuItem:
@@ -71,28 +86,13 @@ class MenuItem:
     @classmethod
     def __create_menu(cls):
         return MenuItem(submenu={
-            '1': MenuItem('Add flashcards', {
-                '1': MenuItem('Add a new flashcard', action=flashcard_utils.add),
-                '2': MenuItem('Exit')}),
-            '2': MenuItem('Practice flashcards', action=cards_menu),
-            '3': MenuItem('Exit')})
-
-    def __add_cards_menu(self):
-        cards = flashcard_utils.get_all_cards()
-        for card in cards:
-            self.__submenu = MenuItem(submenu={
-                '1': MenuItem(name='See the answer', action=lambda: flashcard_utils.check_answer(card)),
-                '2': MenuItem(name='Skip'),
-                '3': MenuItem(name='Update', submenu={
-                    '1': MenuItem(name='Delete the flashcard', action=lambda: flashcard_utils.delete(card)),
-                    '2': MenuItem(name='Edit the flashcard', action=lambda: flashcard_utils.edit(card)),
-                    '3': MenuItem('Exit')
-                }),
-                '4': MenuItem(name='Exit'),
-            })
+            '1': MenuItem('Practice flashcards', action=practice_menu),
+            '2': MenuItem('Add flashcard', action=add_menu),
+            '3': MenuItem('Update flashcards', action=update_menu),
+            '4': MenuItem('Exit')})
 
     @classmethod
-    def get_menu(cls):
+    def main_menu(cls):
         if cls.__main_menu is None:
             cls.__main_menu = cls.__create_menu()
         return cls.__main_menu
