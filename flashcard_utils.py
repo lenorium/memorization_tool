@@ -13,15 +13,22 @@ def delete(card):
 
 
 def edit(card):
-    print(f'current question: {card.question}')
-    question = input('please write a new question: ')
+    print(f'Current question: {card.question}')
 
-    print(f'current answer: {card.answer}')
-    answer = input('please write a new answer: ')
+    is_edited = False
+    question = input('Please write a new question or press "Enter" to skip: ')
+    if question:
+        card.question = question
+        is_edited = True
 
-    card.question = question
-    card.answer = answer
-    db.save(card)
+    print(f'\nCurrent answer: {card.answer}')
+    answer = input('Please write a new answer or press "Enter" to skip: ')
+    if answer:
+        card.answer = answer
+        is_edited = True
+
+    if is_edited:
+        db.save(card)
 
 
 def __input_text(field_name, error):
@@ -34,53 +41,21 @@ def __input_text(field_name, error):
     return value
 
 
-def all_cards_menu():
+def get_all_cards():
     flashcards = db.get_all(Flashcard)
+
     if not flashcards:
         print('There is no flashcard to practice!')
-    else:
-        yes_key = 'y'
-        no_key = 'n'
-        upd_key = 'u'
-        menu = f'press "{yes_key}" to see the answer:\n' \
-               f'press "{no_key}" to skip:\n' \
-               f'press "{upd_key}" to update:'
-        for card in flashcards:
-            print(f'Question: {card.question}:')
-            __show_menu(menu, {yes_key: lambda: __answer_menu(card),
-                               upd_key: lambda: __update_card_menu(card),
-                               no_key: None})
+    return flashcards
 
 
-def __show_menu(menu: str, actions: dict):
-    while True:
-        menu_item = input(menu).lower().strip()
-        if menu_item not in actions.keys():
-            print(f'\n{menu_item} is not an option')
-        else:
-            action = actions[menu_item]
-            if action:
-                action()
-            break
-
-
-def __update_card_menu(card):
-    del_key = 'd'
-    edit_key = 'e'
-    menu = f'press "{del_key}" to delete the flashcard:\n' \
-           f'press "{edit_key}" to edit the flashcard:'
-    __show_menu(menu, {del_key: lambda: delete(card),
-                       edit_key: lambda: edit(card)})
-
-
-def __answer_menu(card):
-    yes_key = 'y'
-    no_key = 'n'
-    menu = f'press "{yes_key}" if your answer is correct:\n' \
-           f'press "{no_key}" if your answer is wrong:'
+def check_answer(card):
     print(f'Answer: {card.answer}')
-    __show_menu(menu, {yes_key: lambda: __is_correct_answer(card),
-                       no_key: lambda: __is_wrong_answer(card)})
+    is_correct = input('Is your answer correct? press "y" for "yes" and "n" for "no": ')
+    if is_correct:
+        __is_correct_answer(card)
+    else:
+        __is_wrong_answer(card)
 
 
 def __is_correct_answer(card: Flashcard):
