@@ -24,6 +24,34 @@ def edit(card):
     db.save(card)
 
 
+def __input_text(field_name, error):
+    while True:
+        value = input(f'{field_name}:').strip()
+        if not value:
+            print(error)
+            continue
+        break
+    return value
+
+
+def all_cards_menu():
+    flashcards = db.get_all(Flashcard)
+    if not flashcards:
+        print('There is no flashcard to practice!')
+    else:
+        yes_key = 'y'
+        no_key = 'n'
+        upd_key = 'u'
+        menu = f'press "{yes_key}" to see the answer:\n' \
+               f'press "{no_key}" to skip:\n' \
+               f'press "{upd_key}" to update:'
+        for card in flashcards:
+            print(f'Question: {card.question}:')
+            __show_menu(menu, {yes_key: lambda: __answer_menu(card),
+                               upd_key: lambda: __update_card_menu(card),
+                               no_key: None})
+
+
 def __show_menu(menu: str, actions: dict):
     while True:
         menu_item = input(menu).lower().strip()
@@ -36,33 +64,34 @@ def __show_menu(menu: str, actions: dict):
             break
 
 
-def get_action():
-    flashcards = db.get_all(Flashcard)
-    if not flashcards:
-        print('There is no flashcard to practice!')
+def __update_card_menu(card):
+    del_key = 'd'
+    edit_key = 'e'
+    menu = f'press "{del_key}" to delete the flashcard:\n' \
+           f'press "{edit_key}" to edit the flashcard:'
+    __show_menu(menu, {del_key: lambda: delete(card),
+                       edit_key: lambda: edit(card)})
+
+
+def __answer_menu(card):
+    yes_key = 'y'
+    no_key = 'n'
+    menu = f'press "{yes_key}" if your answer is correct:\n' \
+           f'press "{no_key}" if your answer is wrong:'
+    print(f'Answer: {card.answer}')
+    __show_menu(menu, {yes_key: lambda: __is_correct_answer(card),
+                       no_key: lambda: __is_wrong_answer(card)})
+
+
+def __is_correct_answer(card: Flashcard):
+    if card.is_in_max_box():
+        db.delete(card)
     else:
-        menu = 'press "y" to see the answer:\n' \
-               'press "n" to skip:\n' \
-               'press "u" to update:'
-        for card in flashcards:
-            print(f'Question: {card.question}:')
-            __show_menu(menu, {'y': lambda: print(f'Answer: {card.answer}'),
-                               'u': lambda: __update_card(card),
-                               'n': None})
+        card.box += 1
+        db.save(card)
 
 
-def __update_card(card):
-    menu = 'press "d" to delete the flashcard:\n' \
-           'press "e" to edit the flashcard:\n'
-    __show_menu(menu, {'d': lambda: delete(card),
-                       'e': lambda: edit(card)})
-
-
-def __input_text(field_name, error):
-    while True:
-        value = input(f'{field_name}:').strip()
-        if not value:
-            print(error)
-            continue
-        break
-    return value
+def __is_wrong_answer(card: Flashcard):
+    if not card.is_in_min_box():
+        card.box -= 1
+        db.save(card)
