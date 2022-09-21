@@ -10,28 +10,29 @@ class Flashcard(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     question = Column(String, nullable=False)
     answer = Column(String, nullable=False)
-    __box = Column(Integer, name='box', nullable=False)
+    box = Column(Integer, name='box', nullable=False)
 
     def __init__(self, question, answer):
         super().__init__()
         self.question = question
         self.answer = answer
-        self.__box = 0
+        self.box = 0
 
     __MAX_BOX = 2
 
-    @property
-    def box(self) -> int:
-        return self.__box
-
-    @box.setter
-    def box(self, box: int):
-        if 0 > box > self.__MAX_BOX:
-            print(f'"box" must be in range from 0 to {self.__MAX_BOX}')
-        self.__box = box
+    # @hybrid_property
+    # @property
+    # def box(self) -> int:
+    #     return self.__box
+    #
+    # @box.setter
+    # def box(self, box: int):
+    #     if 0 > box > self.__MAX_BOX:
+    #         print(f'"box" must be in range from 0 to {self.__MAX_BOX}')
+    #     self.__box = box
 
     def is_in_max_box(self) -> bool:
-        return self.__box == self.__MAX_BOX
+        return self.box == self.__MAX_BOX
 
     def is_in_min_box(self) -> bool:
-        return self.__box == 0
+        return self.box == 0

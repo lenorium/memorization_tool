@@ -1,6 +1,7 @@
 import os
 
 from sqlalchemy import create_engine
+from  sqlalchemy.sql.functions import max
 from sqlalchemy.orm import sessionmaker
 from models import Base
 
@@ -25,9 +26,19 @@ def get_all(cls):
         return session.query(cls).all()
 
 
+def get_all_by_filter(cls, filter_exp):
+    with session_maker() as session:
+        return session.query(cls).filter(filter_exp).all()
+
+
 def delete(entity):
     try:
         with session_maker.begin() as session:
             session.delete(entity)
     except Exception as e:
         print(e)
+
+
+def get_max(col):
+    with session_maker() as session:
+        return session.query(max(col)).one()

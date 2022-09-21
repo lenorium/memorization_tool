@@ -1,4 +1,6 @@
 import flashcard_utils
+from models import Flashcard
+import random
 
 
 def navigate(menu_item):
@@ -25,28 +27,45 @@ def navigate(menu_item):
 
 
 def practice_menu():
-    flashcards = flashcard_utils.get_all_cards()
+    max_stage = flashcard_utils.get_max_box()
+    current_stage = 0
 
-    for card in flashcards:
-        print(f'Question: {card.question}\n')
-        input('Press "Enter" to see answer')
-        flashcard_utils.check_answer(card)
-        to_exit = input('Type "exit" to quit practice mode: ').lower().strip() == 'exit'
-        if to_exit:
-            break
+    while current_stage <= max_stage:
+        print(f'Level {current_stage + 1}')
+        flashcards = flashcard_utils.get_all_cards(lambda: Flashcard.box <= current_stage)
+        random.shuffle(flashcards)
+
+        for card in flashcards:
+            print(f'Question: {card.question}\n')
+            key = input('Press "Enter" to see answer or "s" to skip ')
+            if key != 's':
+                flashcard_utils.check_answer(card)
+            if __exit_command():
+                return
+        current_stage += 1
 
 
 def update_menu():
     flashcards = flashcard_utils.get_all_cards()
+    if not flashcards:
+        print('There is no flashcards')
+    else:
+        menu = MenuItem(submenu={
+            '1': MenuItem(name='Edit the flashcard', action=lambda: flashcard_utils.edit(card)),
+            '2': MenuItem(name='Delete the flashcard', action=lambda: flashcard_utils.delete(card)),
+            '3': MenuItem('Skip')
+        })
+        for card in flashcards:
+            print(f'Question: {card.question}\n')
+            navigate(menu)
+            if __exit_command():
+                break
 
-    menu = MenuItem(submenu={
-        '1': MenuItem(name='Edit the flashcard', action=lambda: flashcard_utils.edit(card)),
-        '2': MenuItem(name='Delete the flashcard', action=lambda: flashcard_utils.delete(card)),
-        '3': MenuItem('Skip')
-    })
-    for card in flashcards:
-        print(f'Question: {card.question}\n')
-        navigate(menu)
+
+def __exit_command():
+    to_exit = input(f'\nType "exit" to quit practice mode ').lower().strip() == 'exit'
+    print()
+    return to_exit
 
 
 def add_menu():
