@@ -21,14 +21,9 @@ def save(entity):
         print(e)
 
 
-def get_all(cls):
+def get_all(cls, *filter_exp):
     with session_maker() as session:
-        return session.query(cls).all()
-
-
-def get_all_by_filter(cls, filter_exp):
-    with session_maker() as session:
-        return session.query(cls).filter(filter_exp).all()
+        return session.query(cls).filter(*filter_exp).all()
 
 
 def delete(entity):

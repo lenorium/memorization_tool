@@ -32,7 +32,7 @@ def practice_menu():
 
     while current_stage <= max_stage:
         print(f'Level {current_stage + 1}')
-        flashcards = flashcard_utils.get_all_cards(lambda: Flashcard.box <= current_stage)
+        flashcards = flashcard_utils.get_all_cards(Flashcard.box <= current_stage)
         random.shuffle(flashcards)
 
         for card in flashcards:

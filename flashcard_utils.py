@@ -41,8 +41,8 @@ def __input_text(field_name, error):
     return value
 
 
-def get_all_cards(filter_exp=None):
-    return db.get_all_by_filter(Flashcard, filter_exp) if filter_exp else db.get_all(Flashcard)
+def get_all_cards(*filter_exp):
+    return db.get_all(Flashcard, *filter_exp)
 
 
 def get_max_box():
